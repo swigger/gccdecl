@@ -1,0 +1,54 @@
+	void traverse(tree ns)
+	{
+		tree decl;
+		cp_binding_level *level = NAMESPACE_LEVEL(ns);
+		
+		// Collect declarations.
+		for (decl = level->names; decl != 0; decl = TREE_CHAIN (decl)) {
+			if (DECL_IS_BUILTIN(decl)) {
+				continue;
+			}
+			
+			if(TREE_CODE(decl) == TYPE_DECL)
+			{
+				if (TREE_CODE(TREE_TYPE(decl)) == RECORD_TYPE &&
+					DECL_ARTIFICIAL(decl))
+				{
+					// if DECL_ARTIFICIAL is false this is a typedef and not a class declaration
+				}
+			}
+			else if(TREE_CODE(decl) == FUNCTION_DECL)
+			{
+				tree_function_decl * fd = &decl->function_decl;
+				
+				printf(",%p\n", fd->common.result);
+				sleep(0);
+			}
+		}
+	}
+	
+	std::string format_namespaces(tree decl)
+	{
+		std::string s;
+		std::string tmp;
+		
+		for(tree cntxt = CP_DECL_CONTEXT(decl); cntxt != global_namespace; cntxt = CP_DECL_CONTEXT(cntxt))
+		{
+			if(TREE_CODE(cntxt) == RECORD_TYPE) {
+				cntxt = TYPE_NAME(cntxt);
+			}
+			tmp = std::string("::") + IDENTIFIER_POINTER(DECL_NAME(cntxt)) + s;
+			s.swap(tmp);
+		}
+		return s;
+	}
+	
+	void gate_callback(void* a, void* b)
+	{
+		cerr << "processing " << main_input_filename << endl;
+		//char cmd[1000];
+		//sprintf(cmd, "ps aux | grep %d", (int)getpid());
+		//system(cmd);
+		sleep(0);
+	}
+
