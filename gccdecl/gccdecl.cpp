@@ -123,6 +123,32 @@ string tree_type(tree t, string & postfix)
 	string rr,tmp;
 	if(!t) return rr;
 	tree_code tc = TREE_CODE(t);
+	switch (tc) {
+	case OFFSET_TYPE:
+	case BOOLEAN_TYPE:
+	case INTEGER_TYPE:
+	case REAL_TYPE:
+	case ENUMERAL_TYPE:
+	case FUNCTION_TYPE:
+	case RECORD_TYPE:
+	case POINTER_TYPE:
+		if (t->type_common.name && TREE_CODE(t->type_common.name) == TYPE_DECL &&
+			t->type_common.name->decl_minimal.name &&
+			TREE_CODE(t->type_common.name->decl_minimal.name) == IDENTIFIER_NODE)
+		{
+			rr = IDENTIFIER_POINTER(t->type_common.name->decl_minimal.name);
+			if (t->type_common.common.typed.base.readonly_flag ||
+				t->type_common.common.typed.base.constant_flag)
+				rr += " const";
+			if (t->type_common.common.typed.base.volatile_flag)
+				rr += " volatile";
+			return rr;
+		}
+		break;
+	default:
+		break;
+	}
+	
 	switch (tc)
 	{
 	case IDENTIFIER_NODE:
