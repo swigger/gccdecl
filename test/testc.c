@@ -54,5 +54,19 @@ typedef union
 void pthread_lock(pthread_mutex_t * xx);
 
 
+union sigval
+{
+  int sival_int;
+  void *sival_ptr;
+};
+typedef int __pid_t;
+extern int sigqueue (__pid_t __pid, int __sig, const union sigval __val)
+     __attribute__ ((__nothrow__ ));
+
+
+struct KK{};
+
+int vv(struct KK const *a, struct KK b);
+
 
 

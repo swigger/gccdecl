@@ -123,7 +123,8 @@ string tree_type(tree t, string & postfix)
 	string rr,tmp;
 	if(!t) return rr;
 	tree_code tc = TREE_CODE(t);
-	switch (tc) {
+	switch (tc)
+	{
 	case OFFSET_TYPE:
 	case BOOLEAN_TYPE:
 	case INTEGER_TYPE:
@@ -133,11 +134,25 @@ string tree_type(tree t, string & postfix)
 	case RECORD_TYPE:
 	case POINTER_TYPE:
 	case UNION_TYPE:
+	case VOID_TYPE:
 		if (t->type_common.name && TREE_CODE(t->type_common.name) == TYPE_DECL &&
 			t->type_common.name->decl_minimal.name &&
 			TREE_CODE(t->type_common.name->decl_minimal.name) == IDENTIFIER_NODE)
 		{
 			rr = IDENTIFIER_POINTER(t->type_common.name->decl_minimal.name);
+			if (t->type_common.common.typed.base.readonly_flag ||
+				t->type_common.common.typed.base.constant_flag)
+				rr += " const";
+			if (t->type_common.common.typed.base.volatile_flag)
+				rr += " volatile";
+			return rr;
+		}
+		if (t->type_common.name && TREE_CODE(t->type_common.name) == IDENTIFIER_NODE)
+		{
+			if (tc == RECORD_TYPE) rr = "struct ";
+			else if (tc == UNION_TYPE) rr = "union ";
+			else rr = "";
+			rr += IDENTIFIER_POINTER(t->type_common.name);
 			if (t->type_common.common.typed.base.readonly_flag ||
 				t->type_common.common.typed.base.constant_flag)
 				rr += " const";
@@ -154,17 +169,6 @@ string tree_type(tree t, string & postfix)
 	{
 	case IDENTIFIER_NODE:
 		return IDENTIFIER_POINTER(t);
-	case VOID_TYPE:
-		return "void";
-	case INTEGER_TYPE:
-	case REAL_TYPE:
-		rr = IDENTIFIER_POINTER(DECL_NAME(t->type_common.name));
-		if (t->type_common.common.typed.base.readonly_flag ||
-			t->type_common.common.typed.base.constant_flag)
-			rr += " const";
-		if (t->type_common.common.typed.base.volatile_flag)
-			rr += " volatile";
-		return rr;
 	case POINTER_TYPE:
 		rr = tree_type(t->typed.type, tmp);
 		rr += "*";
@@ -177,10 +181,6 @@ string tree_type(tree t, string & postfix)
 		return rr;
 	case TYPE_DECL:
 		return decl_name_p(t);
-	case RECORD_TYPE:
-		rr = "struct " + tree_type(TYPE_NAME(t), tmp);
-		assert(tmp.empty());
-		return rr;
 	case PARM_DECL:
 		for (tree decl = t; decl != 0; decl = TREE_CHAIN (decl)) {
 			string tp = tree_type(decl->typed.type, tmp);
