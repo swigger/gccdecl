@@ -175,12 +175,18 @@ string tree_type(tree t, string & postfix)
 			string args;
 			for (tree x = t->type_non_common.values; x && x->list.value; x = x->list.common.chain)
 			{
-				if (x->list.common.chain == 0) break;
+				if (TREE_CODE(x->list.value) == VOID_TYPE)
+					break;
 				string aa = tree_type(x->list.value, tmp);
 				args += aa;
 				args += tmp;
 				args += ", ";
 				tmp.clear();
+				if (x->list.common.chain == 0)
+				{
+					args += "..., ";
+					break;
+				}
 			}
 			if (args.size()>2) args.resize(args.size()-2);
 			assert(postfix.empty());
