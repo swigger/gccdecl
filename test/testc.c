@@ -44,3 +44,15 @@ typedef enum
 
 td_err_e eeefunc();
 
+
+
+typedef union
+{
+  char __size[40];
+  long int __align;
+} pthread_mutex_t;
+void pthread_lock(pthread_mutex_t * xx);
+
+
+
+

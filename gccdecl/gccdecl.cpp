@@ -132,6 +132,7 @@ string tree_type(tree t, string & postfix)
 	case FUNCTION_TYPE:
 	case RECORD_TYPE:
 	case POINTER_TYPE:
+	case UNION_TYPE:
 		if (t->type_common.name && TREE_CODE(t->type_common.name) == TYPE_DECL &&
 			t->type_common.name->decl_minimal.name &&
 			TREE_CODE(t->type_common.name->decl_minimal.name) == IDENTIFIER_NODE)
@@ -220,7 +221,6 @@ string tree_type(tree t, string & postfix)
 			rt += "(";
 			return rt;
 		}
-		return "???";
 	default:
 		sleep(0);
 		return "???";
